@@ -1,0 +1,110 @@
+version: "3.8"
+services:
+  postgres:
+    image: library/postgres:13
+    container_name: postgres
+    restart: on-failure
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./postgres/:/docker-entrypoint-initdb.d/
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  flight-service:
+    build:
+      context: .  # 使用项目根目录
+      dockerfile: flight-service/Dockerfile
+    container_name: flight-service
+    restart: on-failure
+    ports:
+      - "8060:8060"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/flight_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8060/manage/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ticket-service:
+    build:
+      context: .  # 使用项目根目录
+      dockerfile: ticket-service/Dockerfile
+    container_name: ticket-service
+    restart: on-failure
+    ports:
+      - "8070:8070"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ticket_db
+      SERVICE_BONUS_URL: http://bonus-service:8050  # 添加这行
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8070/manage/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  bonus-service:
+    build:
+      context: .  # 使用项目根目录
+      dockerfile: bonus-service/Dockerfile
+    container_name: bonus-service
+    restart: on-failure
+    ports:
+      - "8050:8050"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bonus_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8050/manage/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  gateway-service:
+    build:
+      context: .  # 使用项目根目录
+      dockerfile: gateway-service/Dockerfile
+    container_name: gateway-service
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVICE_FLIGHT_URL: http://flight-service:8060
+      SERVICE_TICKET_URL: http://ticket-service:8070
+      SERVICE_BONUS_URL: http://bonus-service:8050
+    depends_on:
+      flight-service:
+        condition: service_healthy
+      ticket-service:
+        condition: service_healthy
+      bonus-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/manage/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:

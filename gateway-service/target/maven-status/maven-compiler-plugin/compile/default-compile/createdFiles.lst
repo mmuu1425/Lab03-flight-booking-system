@@ -1,0 +1,12 @@
+com\example\gatewayservice\config\RestTemplateConfig.class
+com\example\gatewayservice\dto\TicketResponse.class
+com\example\gatewayservice\dto\PrivilegeHistoryResponse.class
+com\example\gatewayservice\service\GatewayService.class
+com\example\gatewayservice\dto\UserInfoResponse.class
+com\example\gatewayservice\service\FlightService.class
+com\example\gatewayservice\GatewayServiceApplication.class
+com\example\gatewayservice\controller\GatewayController.class
+com\example\gatewayservice\dto\PrivilegeShortInfo.class
+com\example\gatewayservice\dto\PrivilegeResponse.class
+com\example\gatewayservice\controller\HealthController.class
+org\example\App.class

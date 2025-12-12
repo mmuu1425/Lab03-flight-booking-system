@@ -1,0 +1,12 @@
+com\example\flightservice\FlightServiceApplication.class
+com\example\flightservice\controller\FlightController.class
+com\example\flightservice\dto\FlightItemResponse.class
+com\example\flightservice\repository\FlightRepository.class
+com\example\flightservice\service\FlightService.class
+com\example\flightservice\entity\Flight.class
+com\example\flightservice\controller\HealthController.class
+com\example\flightservice\dto\FlightPaginationResponse.class
+com\example\flightservice\entity\Airport.class
+com\example\flightservice\repository\AirportRepository.class
+com\example\flightservice\service\FlightServiceImpl.class
+org\example\App.class

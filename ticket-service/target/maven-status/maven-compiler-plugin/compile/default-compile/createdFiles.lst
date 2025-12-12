@@ -1,0 +1,16 @@
+com\example\ticketservice\config\AppConfig.class
+com\example\ticketservice\service\TicketService.class
+com\example\ticketservice\service\TicketServiceImpl$BonusRefundRequest.class
+com\example\ticketservice\controller\TicketController.class
+com\example\ticketservice\repository\TicketRepository.class
+com\example\ticketservice\controller\HealthController.class
+com\example\ticketservice\dto\TicketPurchaseRequest.class
+com\example\ticketservice\service\TicketServiceImpl.class
+com\example\ticketservice\TicketServiceApplication.class
+com\example\ticketservice\dto\PrivilegeShortInfo.class
+com\example\ticketservice\service\TicketServiceImpl$BonusOperationResponse.class
+com\example\ticketservice\service\TicketServiceImpl$BonusPurchaseRequest.class
+com\example\ticketservice\dto\TicketResponse.class
+org\example\App.class
+com\example\ticketservice\dto\TicketPurchaseResponse.class
+com\example\ticketservice\entity\Ticket.class

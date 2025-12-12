@@ -1,0 +1,26 @@
+{
+  "id": "cc712d67-c1f8-4094-a082-1b288efa7b78",
+  "name": "[rsoi][local] Flight Service",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "enabled": true
+    },
+    {
+      "key": "username",
+      "value": "Test Max",
+      "enabled": true
+    },
+    {
+      "key": "flightNumber",
+      "value": "AFL031",
+      "enabled": true
+    },
+    {
+      "key": "balance",
+      "value": "",
+      "enabled": true
+    }
+  ]
+}

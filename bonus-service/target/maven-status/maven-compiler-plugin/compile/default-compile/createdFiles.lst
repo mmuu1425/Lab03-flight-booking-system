@@ -1,0 +1,17 @@
+com\example\bonusservice\dto\PrivilegeResponse.class
+com\example\bonusservice\controller\HealthController.class
+com\example\bonusservice\repository\PrivilegeHistoryRepository.class
+com\example\bonusservice\dto\PrivilegeHistoryResponse.class
+com\example\bonusservice\dto\PurchaseRequest.class
+com\example\bonusservice\entity\Privilege.class
+com\example\bonusservice\dto\BonusOperationResponse.class
+com\example\bonusservice\dto\PrivilegeShortInfo.class
+com\example\bonusservice\entity\PrivilegeHistory.class
+com\example\bonusservice\BonusServiceApplication.class
+com\example\bonusservice\controller\BonusController.class
+com\example\bonusservice\service\BonusService.class
+com\example\bonusservice\dto\RefundRequest.class
+org\example\App.class
+com\example\bonusservice\service\BonusServiceImpl.class
+com\example\bonusservice\repository\PrivilegeRepository.class
+com\example\bonusservice\service\BonusService$BonusOperationResult.class

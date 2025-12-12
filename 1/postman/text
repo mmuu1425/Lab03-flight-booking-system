@@ -1,0 +1,5 @@
+
+//创建test max用户文本，测试用
+docker exec postgres psql -U postgres -d bonus_db -c "
+INSERT INTO privilege (username, status, balance) VALUES ('Test Max', 'GOLD', 1500)
+ON CONFLICT (username) DO NOTHING;INSERT INTO privilege_history (privilege_id, ticket_uid, datetime, balance_diff, operation_type) SELECT id, '049161bb-badd-4fa8-9d90-87c9a82b0668', '2021-10-08 19:59:19', 1500, 'FILL_IN_BALANCE' FROM privilege WHERE username = 'Test Max' ON CONFLICT DO NOTHING;"
