@@ -1,0 +1,54 @@
+server:
+  port: 8080
+
+service:
+  flight:
+    url: http://localhost:8060
+  ticket:
+    url: http://localhost:8070
+  bonus:
+    url: http://localhost:8050
+
+# application.yml (Gateway服务)
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10  # 滑动窗口大小
+        minimum-number-of-calls: 5  # 最小调用次数
+        permitted-number-of-calls-in-half-open-state: 3  # 半开状态允许调用数
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 30s  # 开状态等待时间
+        failure-rate-threshold: 50  # 失败率阈值50%（关键修改！）
+        slow-call-rate-threshold: 100
+        slow-call-duration-threshold: 2s
+        record-exceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - org.springframework.web.client.ResourceAccessException
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+        ignore-exceptions:
+          - com.example.gatewayservice.service.ServiceUnavailableException
+
+    instances:
+      flightService:
+        base-config: default
+        failure-rate-threshold: 60  # 60%失败就触发
+
+      ticketService:
+        base-config: default
+        failure-rate-threshold: 60
+
+      bonusService:
+        base-config: default
+        sliding-window-size: 5  # Bonus服务窗口更小
+        minimum-number-of-calls: 3  # 最少调用次数更少
+        failure-rate-threshold: 50  # 50%失败就触发（更容易触发）
+
+      purchaseService:
+        base-config: default
+        failure-rate-threshold: 50
+
+      userInfoService:
+        base-config: default
+        failure-rate-threshold: 60

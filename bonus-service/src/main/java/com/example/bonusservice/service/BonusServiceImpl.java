@@ -53,42 +53,63 @@ public class BonusServiceImpl implements BonusService {
     @Override
     @Transactional
     public BonusOperationResult processPurchase(String username, UUID ticketUid, Integer price, boolean paidFromBalance) {
+        // 1. 幂等性检查：如果这个ticket已经处理过，直接返回当前状态
+        Optional<PrivilegeHistory> existingHistory = privilegeHistoryRepository.findByTicketUid(ticketUid);
+        if (existingHistory.isPresent()) {
+            PrivilegeHistory history = existingHistory.get();
+            Privilege privilege = history.getPrivilege();
+
+            // 根据历史记录推断支付方式
+            int paidByBonuses = 0;
+            int paidByMoney = price;
+
+            if ("DEBIT_THE_ACCOUNT".equals(history.getOperationType())) {
+                // 之前使用了积分支付
+                paidByBonuses = Math.abs(history.getBalanceDiff());
+                paidByMoney = price - paidByBonuses;
+            }
+
+            return new BonusOperationResult(paidByMoney, paidByBonuses, privilege);
+        }
+
+        // 2. 正常处理逻辑
         Privilege privilege = getOrCreatePrivilege(username);
         int paidByBonuses = 0;
         int paidByMoney = price;
 
         if (paidFromBalance && privilege.getBalance() > 0) {
-            // 使用积分支付
             paidByBonuses = Math.min(privilege.getBalance(), price);
             paidByMoney = price - paidByBonuses;
 
-            // 扣除积分
             privilege.setBalance(privilege.getBalance() - paidByBonuses);
             privilegeRepository.save(privilege);
 
-            // 记录积分扣除历史
             PrivilegeHistory debitHistory = new PrivilegeHistory(privilege, ticketUid, -paidByBonuses, "DEBIT_THE_ACCOUNT");
             privilegeHistoryRepository.save(debitHistory);
         } else {
-            // 不使用积分支付，获得10%积分
             int earnedBonuses = (int) (price * 0.1);
             privilege.setBalance(privilege.getBalance() + earnedBonuses);
             privilegeRepository.save(privilege);
 
-            // 记录积分获得历史
             PrivilegeHistory fillHistory = new PrivilegeHistory(privilege, ticketUid, earnedBonuses, "FILL_IN_BALANCE");
             privilegeHistoryRepository.save(fillHistory);
         }
 
-        // 更新特权状态（基于积分余额）
         updatePrivilegeStatus(privilege);
-
         return new BonusOperationResult(paidByMoney, paidByBonuses, privilege);
     }
 
     @Override
     @Transactional
     public void processRefund(String username, UUID ticketUid) {
+        // 幂等性检查：如果已经有退款记录，不再处理
+        Optional<PrivilegeHistory> existingRefund = privilegeHistoryRepository.findByTicketUid(ticketUid)
+                .filter(h -> h.getDatetime().isAfter(LocalDateTime.now().minusMinutes(1))); // 最近1分钟
+
+        if (existingRefund.isPresent()) {
+            return; // 已经处理过退款
+        }
+
         Optional<Privilege> privilegeOpt = privilegeRepository.findByUsername(username);
         if (privilegeOpt.isEmpty()) {
             return;
@@ -101,7 +122,6 @@ public class BonusServiceImpl implements BonusService {
 
         for (PrivilegeHistory history : historyRecords) {
             if (history.getTicketUid().equals(ticketUid)) {
-                // 撤销之前的积分操作
                 int reverseAmount = -history.getBalanceDiff();
                 String reverseOperationType = history.getOperationType().equals("FILL_IN_BALANCE")
                         ? "DEBIT_THE_ACCOUNT"
@@ -110,11 +130,9 @@ public class BonusServiceImpl implements BonusService {
                 privilege.setBalance(privilege.getBalance() + reverseAmount);
                 privilegeRepository.save(privilege);
 
-                // 记录撤销操作
                 PrivilegeHistory reverseHistory = new PrivilegeHistory(privilege, ticketUid, reverseAmount, reverseOperationType);
                 privilegeHistoryRepository.save(reverseHistory);
 
-                // 更新特权状态
                 updatePrivilegeStatus(privilege);
                 break;
             }

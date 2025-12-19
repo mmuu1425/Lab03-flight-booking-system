@@ -17,7 +17,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="bonus-service" options="" />
       <module name="flight-service" options="-parameters" />
-      <module name="gateway-service" options="-parameters" />
+      <module name="gateway-service" options="" />
       <module name="ticket-service" options="" />
     </option>
   </component>

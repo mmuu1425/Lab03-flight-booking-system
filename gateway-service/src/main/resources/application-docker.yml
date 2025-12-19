@@ -1,0 +1,8 @@
+# Docker环境配置
+service:
+  flight:
+    url: http://flight-service:8060
+  ticket:
+    url: http://ticket-service:8070
+  bonus:
+    url: http://bonus-service:8050

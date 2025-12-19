@@ -12,5 +12,6 @@ import java.util.UUID;
 public interface TicketRepository extends JpaRepository<Ticket, Integer> {
     List<Ticket> findByUsernameOrderByIdDesc(String username);
     Optional<Ticket> findByTicketUidAndUsername(UUID ticketUid, String username);
+    Optional<Ticket> findByTicketUid(UUID ticketUid); // 添加这个方法
     boolean existsByTicketUid(UUID ticketUid);
 }
