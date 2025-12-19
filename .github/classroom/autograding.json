@@ -1,9 +1,9 @@
 {
   "tests": [
     {
-      "name": "Run API Tests",
+      "name": "Run Postman",
       "setup": "",
-      "run": "bash scripts/test-script.sh 1 bonus-service 8050",
+      "run": "newman run --delay-request=100 --folder=success --environment 1/postman/environment.json 1/postman/collection.json",
       "input": "",
       "output": "",
       "comparison": "included",
