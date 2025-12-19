@@ -1,44 +1,14 @@
 {
   "tests": [
     {
-      "name": "Build Test",
-      "setup": "mvn clean compile -Dvariant=1",
-      "run": "echo 'Build successful'",
-      "input": "",
-      "output": "",
-      "comparison": "included",
-      "timeout": 10,
-      "points": 3
-    },
-    {
-      "name": "Unit Tests",
-      "setup": "mvn test -Dvariant=1",
-      "run": "echo 'Unit tests completed'",
-      "input": "",
-      "output": "",
-      "comparison": "included",
-      "timeout": 10,
-      "points": 3
-    },
-    {
-      "name": "Docker Build",
-      "setup": "docker compose build",
-      "run": "echo 'Docker build successful'",
-      "input": "",
-      "output": "",
-      "comparison": "included",
-      "timeout": 10,
-      "points": 2
-    },
-    {
-      "name": "Run Postman",
+      "name": "Run API Tests",
       "setup": "",
-      "run": "newman run -e 1/postman/environment.json 1/postman/collection.json",
+      "run": "bash scripts/test-script.sh 1 bonus-service 8050",
       "input": "",
       "output": "",
       "comparison": "included",
       "timeout": 10,
-      "points": 2
+      "points": 10
     }
   ]
 }
