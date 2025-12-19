@@ -38,9 +38,9 @@ step() {
 
   docker compose "$operation" "$service"
   if [[ "$operation" == "start" ]]; then
-    sleep 10
+    sleep 30
     "$path"/wait-for.sh -t 120 "http://localhost:$port/manage/health" -- echo "Host localhost:$port is active"
-    sleep 10
+    sleep 15
   fi
 
   newman run \
